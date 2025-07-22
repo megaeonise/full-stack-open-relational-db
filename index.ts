@@ -1,4 +1,3 @@
-
 // require("dotenv").config();
 // const { Sequelize, QueryTypes } = require("sequelize");
 // const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -18,72 +17,22 @@
 // };
 
 // main();
-require('dotenv').config()
+// require("express-5.x-async-errors"); shame
+const express = require("express");
+const blogsRouter = require("./controllers/blogs");
+const errorHandler = require("./middleware/errorHandler");
+const app = express();
 
-const { Sequelize, Model, DataTypes } = require('sequelize')
-const express = require('express')
-const app = express()
-app.use(express.json())
+const { PORT } = require("./util/config");
+const { connectToDatabase } = require("./util/db");
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres"
-});
-
-
-class Blogs extends Model {}
-Blogs.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  author: {
-    type: DataTypes.TEXT,
-  },
-  url: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  title: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  likes: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0
-  },
-}, {
-  sequelize,
-  underscored: true,
-  timestamps: false,
-  modelName: 'blogs'
-})
-
-app.get('/api/blogs', async (_req: any, res: { json: (arg0: any) => void; }) => {
-  const blogs = await Blogs.findAll()
-  console.log(JSON.stringify(blogs))
-  res.json(blogs)
-})
-
-app.post('/api/blogs', async (req: any, res: any) => {
-  console.log(req.body)
-  try {
-    const blog = await Blogs.create(req.body)
-    res.json(blog)
-  } catch (error) {
-    return res.status(400).json()
-  }
-
-})
-app.delete('/api/blogs/:id', async (req: any, res: any) => {
-  console.log(req.params.id)
-  await Blogs.destroy({where: {
-    id: req.params.id
-  }})
-  res.json(req.params.id)
-})
-
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+app.use(express.json());
+app.use("/api/blogs", blogsRouter);
+app.use(errorHandler);
+const start = async () => {
+  await connectToDatabase();
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+start();

@@ -11,7 +11,8 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "declaration": true,
-    "target": "es6"
+    "target": "es6",
+    "moduleDetection": "force"
   },
-  "lib": ["es20es15"]
+  "lib": ["es6"]
 }
