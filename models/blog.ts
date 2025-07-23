@@ -18,7 +18,7 @@ Blogs.init(
       validate: {
         minLength(value: String) {
           if (value.length === 0) {
-            throw new Error("Validation Error: URL length cannot be 0");
+            throw new Error("Validation error: URL length cannot be 0");
           }
         },
       },
@@ -29,7 +29,7 @@ Blogs.init(
       validate: {
         minLength(value: String) {
           if (value.length === 0) {
-            throw new Error("Validation Error: Title length cannot be 0");
+            throw new Error("Validation error: Title length cannot be 0");
           }
         },
       },
@@ -37,6 +37,17 @@ Blogs.init(
     likes: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      validate: {
+        min: { args: [1991], msg: "Year must be greater or equal to 1991" },
+        max: {
+          args: [new Date().getFullYear()],
+          msg: "Year must be less than or equal to current year",
+        },
+      },
     },
   },
   {
