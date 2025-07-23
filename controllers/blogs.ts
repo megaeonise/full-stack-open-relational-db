@@ -1,12 +1,24 @@
+const { Op } = require("sequelize");
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const { Blogs } = require("../models");
+const { Blog } = require("../models");
 const { User } = require("../models");
 const { SECRET } = require("../util/config");
 
-router.get("/", async (_req: any, res: { json: (arg0: any) => void }) => {
-  const blogs = await Blogs.findAll({
+router.get("/", async (req: any, res: { json: (arg0: any) => void }) => {
+  const blogs = await Blog.findAll({
     include: { model: User, attributes: ["name"] },
+    where: {
+      [Op.or]: [
+        {
+          title: { [Op.substring]: req.query.search ? req.query.search : "" },
+        },
+        {
+          author: { [Op.substring]: req.query.search ? req.query.search : "" },
+        },
+      ],
+    },
+    order: [["likes", "DESC"]],
   });
   res.json(blogs);
 });
@@ -37,7 +49,7 @@ const tokenExtractor = (
 router.post("/", tokenExtractor, async (req: any, res: any) => {
   console.log(req.body);
   const user = await User.findByPk(req.decodedToken.id);
-  const blog = await Blogs.create({
+  const blog = await Blog.create({
     ...req.body,
     userId: user.id,
     date: new Date(),
@@ -50,7 +62,7 @@ const blogFinder = async (
   _res: any,
   next: () => void
 ) => {
-  req.blog = await Blogs.findByPk(req.params.id);
+  req.blog = await Blog.findByPk(req.params.id);
   next();
 };
 
@@ -61,7 +73,7 @@ router.delete(
   async (req: any, res: any) => {
     const user = await User.findByPk(req.decodedToken.id);
     if (user.id === req.blog.userId) {
-      await Blogs.destroy({
+      await Blog.destroy({
         where: {
           id: req.params.id,
         },
@@ -74,7 +86,7 @@ router.delete(
 );
 
 router.put("/:id", blogFinder, async (req: any, res: any) => {
-  await Blogs.update(
+  await Blog.update(
     { likes: req.body.likes },
     {
       where: {
