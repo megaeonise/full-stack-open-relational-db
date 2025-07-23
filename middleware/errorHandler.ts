@@ -1,11 +1,13 @@
 const errorHandler = (
-  error: { message: any },
-  _request: any,
-  _response: any,
+  error: any,
+  _req: any,
+  res: any,
   next: (arg0: any) => void
 ) => {
   console.error(error.message);
-  console.log("hello where is error");
+  res.json({
+    error: error.message.split("\n"),
+  });
   next(error);
 };
 module.exports = errorHandler;
