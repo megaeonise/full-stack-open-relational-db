@@ -23,6 +23,7 @@ const blogRouter = require("./controllers/blogs");
 const userRouter = require("./controllers/users");
 const authorRouter = require("./controllers/authors");
 const loginRouter = require("./controllers/login");
+const readingListRouter = require("./controllers/readingLists");
 
 const errorHandler = require("./middleware/errorHandler");
 const app = express();
@@ -34,6 +35,8 @@ app.use(express.json());
 app.use("/api/blogs", blogRouter);
 app.use("/api/users", userRouter);
 app.use("/api/authors", authorRouter);
+app.use("/api/readinglists", readingListRouter);
+
 app.use("/api/login", loginRouter);
 app.use(errorHandler);
 const start = async () => {
