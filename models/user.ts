@@ -20,12 +20,25 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    disabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     sequelize,
     underscored: true,
     timestamps: true,
     modelName: "user",
+    // defaultScope: { where: { disabled: false } },
+    // scopes: {
+    //   disabled: {
+    //     where: {
+    //       disabled: true,
+    //     },
+    //   },
+    // },
   }
 );
 

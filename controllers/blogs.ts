@@ -23,7 +23,6 @@ router.get("/", async (req: any, res: { json: (arg0: any) => void }) => {
 });
 
 router.post("/", tokenExtractor, async (req: any, res: any) => {
-  console.log(req.body);
   const user = await User.findByPk(req.decodedToken.id);
   const blog = await Blog.create({
     ...req.body,

@@ -23,6 +23,8 @@ const blogRouter = require("./controllers/blogs");
 const userRouter = require("./controllers/users");
 const authorRouter = require("./controllers/authors");
 const loginRouter = require("./controllers/login");
+const logoutRouter = require("./controllers/logout");
+
 const readingListRouter = require("./controllers/readingLists");
 
 const errorHandler = require("./middleware/errorHandler");
@@ -38,6 +40,7 @@ app.use("/api/authors", authorRouter);
 app.use("/api/readinglists", readingListRouter);
 
 app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
 app.use(errorHandler);
 const start = async () => {
   await connectToDatabase();

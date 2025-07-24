@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User } = require("../models");
+const { User, Session } = require("../models");
 const { Blog } = require("../models");
 const { ReadingList } = require("../models");
 const { Op } = require("sequelize");
@@ -75,6 +75,23 @@ router.put("/:username", async (req: any, res: any) => {
     }
   );
   res.json({ username: req.body.username });
+});
+
+router.put("/manage/:id", async (req: any, res: any) => {
+  await User.update(
+    { disabled: req.body.disabled },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  );
+  await Session.destroy({
+    where: {
+      userId: req.params.id,
+    },
+  });
+  res.json({ disabled: req.body.disabled });
 });
 
 module.exports = router;
