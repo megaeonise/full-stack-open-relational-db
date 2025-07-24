@@ -1,8 +1,8 @@
 const router = require("express").Router();
-
 const { User } = require("../models");
 const { Blog } = require("../models");
-// const { ReadingList } = require("../models");
+const { ReadingList } = require("../models");
+const { Op } = require("sequelize");
 
 router.get("/", async (_req: any, res: { json: (arg0: any) => void }) => {
   const users = await User.findAll({
@@ -21,6 +21,25 @@ router.get("/:id", async (req: any, res: { json: (arg0: any) => void }) => {
         attributes: { exclude: ["userId", "user", "createdAt", "updatedAt"] },
         through: {
           attributes: [],
+        },
+        include: {
+          model: ReadingList,
+          as: "readinglists",
+          attributes: ["id", "read"],
+          where: {
+            [Op.or]: [
+              {
+                read: {
+                  [Op.eq]: req.query.read ? req.query.read : false,
+                },
+              },
+              {
+                read: {
+                  [Op.eq]: req.query.read ? req.query.read : true,
+                },
+              },
+            ],
+          },
         },
       },
     ],
@@ -47,7 +66,6 @@ router.post(
 );
 
 router.put("/:username", async (req: any, res: any) => {
-  console.log(req.params.username, req.body.username);
   await User.update(
     { username: req.body.username },
     {
